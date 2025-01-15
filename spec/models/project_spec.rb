@@ -26,4 +26,21 @@ RSpec.describe Project, type: :model do
     other_project = other_user.projects.new(name: 'Test Project')
     expect(other_project).to be_valid
   end
+
+  describe '#late?' do
+    it '締切日が過ぎていれば遅延していること' do
+      project = FactoryBot.create(:project, :due_yesterday)
+      expect(project).to be_late
+    end
+
+    it '締切日が今日ならスケジュール通りであること' do
+      project = FactoryBot.create(:project, :due_today)
+      expect(project).to_not be_late
+    end
+
+    it '締切日が未来ならスケジュール通りであること' do
+      project = FactoryBot.create(:project, :due_tomorrow)
+      expect(project).to_not be_late
+    end
+  end
 end
