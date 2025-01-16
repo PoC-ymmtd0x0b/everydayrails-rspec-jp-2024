@@ -1,29 +1,26 @@
 require 'rails_helper'
 
 RSpec.describe Project, type: :model do
-  it 'ユーザー単位では重複すたプロジェクト名を許可しないこと' do
-    user = User.create(first_name: 'tanaka',
-                       last_name:  'taro',
-                       email:      'taro@example.com',
-                       password:   'foobar')
-    user.projects.create(name: 'Test Project')
-    new_project = user.projects.new(name: 'Test Project')
+  it '有効なファクトリを持つこと' do
+    project = FactoryBot.build(:project)
+    expect(project).to be_valid
+  end
+
+  it 'ユーザー単位では重複したプロジェクト名を許可しないこと' do
+    user = FactoryBot.create(:user)
+    FactoryBot.create(:project, name: 'Test Project', owner: user)
+
+    new_project = FactoryBot.build(:project, name: 'Test Project', owner: user)
     new_project.valid?
     expect(new_project.errors[:name]).to include("has already been taken")
   end
 
   it '二人のユーザーが同じプロジェクト名を使うのを許可すること' do
-    user = User.create(first_name: 'tanaka',
-                       last_name:  'taro',
-                       email:      'taro@example.com',
-                       password:   'foobar')
-    user.projects.create(name: 'Test Project')
+    user = FactoryBot.create(:user, first_name: '田中', last_name: '太郎')
+    FactoryBot.create(:project, name: 'Test Project', owner: user)
 
-    other_user = User.create(first_name: 'yamada',
-                             last_name:  'jiro',
-                             email:      'jiro@example.com',
-                             password:   'foobar')
-    other_project = other_user.projects.new(name: 'Test Project')
+    other_user = FactoryBot.create(:user, first_name: '日本', last_name: '花子')
+    other_project = FactoryBot.build(:project, name: 'Test Project', owner: other_user)
     expect(other_project).to be_valid
   end
 

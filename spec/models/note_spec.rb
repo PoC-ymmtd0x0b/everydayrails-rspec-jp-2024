@@ -1,31 +1,29 @@
 require 'rails_helper'
 
 RSpec.describe Note, type: :model do
-  before do
-    @user = User.create!(first_name: 'tanaka',
-                        last_name:  'taro',
-                        email:      'taro@example.com',
-                        password:   'foobar')
-
-    @project = @user.projects.create!(name: 'Test Project')
+  it '有効なファクトリを持つこと' do
+    note = FactoryBot.build(:note)
+    expect(note).to be_valid
   end
 
   it 'ユーザー、プロジェクト、メッセージがあれば有効な状態であること' do
-    note = Note.new(message: 'This note is valid.', user: @user, project: @project)
+    user = FactoryBot.create(:user)
+    project = FactoryBot.create(:project)
+    note = Note.new(message: 'This note is valid.', user:, project:)
     expect(note).to be_valid
   end
 
   it 'メッセージが無ければ無効な状態であること' do
-    note = Note.new(message: nil)
+    note = FactoryBot.build(:note, message: nil)
     note.valid?
     expect(note.errors[:message]).to include("can't be blank")
   end
 
   describe '.search' do
     before do
-      @note1 = @project.notes.create!(message: 'This is first note.', user: @user)
-      @note2 = @project.notes.create!(message: 'This is second note.', user: @user)
-      @note3 = @project.notes.create!(message: 'First, preheat the oven.', user: @user)
+      @note1 = FactoryBot.create(:note, message: 'This is first note.')
+      @note2 = FactoryBot.create(:note, message: 'This is second note.')
+      @note3 = FactoryBot.create(:note, message: 'First, preheat the oven.')
     end
 
     context '検索文字列に一致するデータが"見つかる"とき' do
