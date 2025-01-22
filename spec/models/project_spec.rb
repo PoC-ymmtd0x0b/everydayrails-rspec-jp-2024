@@ -6,14 +6,7 @@ RSpec.describe Project, type: :model do
     expect(project).to be_valid
   end
 
-  it 'ユーザー単位では重複したプロジェクト名を許可しないこと' do
-    user = FactoryBot.create(:user)
-    FactoryBot.create(:project, name: 'Test Project', owner: user)
-
-    new_project = FactoryBot.build(:project, name: 'Test Project', owner: user)
-    new_project.valid?
-    expect(new_project.errors[:name]).to include("has already been taken")
-  end
+  it { is_expected.to validate_uniqueness_of(:name).scoped_to(:user_id) }
 
   it '二人のユーザーが同じプロジェクト名を使うのを許可すること' do
     user = FactoryBot.create(:user, first_name: '田中', last_name: '太郎')
