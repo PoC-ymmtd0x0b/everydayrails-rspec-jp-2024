@@ -21,7 +21,7 @@ RSpec.describe Note, type: :model do
 
   describe '#user_name' do
     it '名前の取得をメモを作成したユーザーに移譲すること' do
-      user = double('user', name: 'Fake User')
+      user = instance_double('User', name: 'Fake User')
       note = Note.new
       allow(note).to receive(:user).and_return(user)
       expect(note.user_name).to eq 'Fake User'
