@@ -24,4 +24,10 @@ RSpec.describe User, type: :model do
     user = FactoryBot.build(:user, first_name: 'tanaka', last_name: 'taro')
     expect(user.name).to eq 'tanaka taro'
   end
+
+  it 'アカウントが作成された際にウェルカムメールを送信すること' do
+    allow(UserMailer).to receive_message_chain(:welcome_email, :deliver_later)
+    user = FactoryBot.create(:user)
+    expect(UserMailer).to have_received(:welcome_email).with(user)
+  end
 end
