@@ -30,4 +30,11 @@ RSpec.describe User, type: :model do
     user = FactoryBot.create(:user)
     expect(UserMailer).to have_received(:welcome_email).with(user)
   end
+
+  it 'ジオコーディングを実行すること', vcr: { cassette_name: 'user/geocode' } do
+    user = FactoryBot.create(:user, last_sign_in_ip: '161.185.207.20')
+    expect do
+      user.geocode
+    end.to change(user, :location).from(nil).to('New York City, New York, US')
+  end
 end
