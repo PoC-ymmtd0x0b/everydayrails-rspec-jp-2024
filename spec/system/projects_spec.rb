@@ -19,4 +19,21 @@ RSpec.describe "Projects", type: :system do
       expect(page).to have_content "Owner: #{user.name}"
     end
   end
+
+  scenario 'ユーザーはプロジェクトを完了済みにする' do
+    user = FactoryBot.create(:user)
+    project = FactoryBot.create(:project, name: 'Complete Project', owner: user)
+    sign_in_as(user)
+
+    visit project_path(project)
+
+    expect(page).to_not have_content 'Completed'
+
+    click_button 'Complete'
+
+    expect(project.reload.completed?).to be true
+    expect(page).to have_content 'Congratulations, this project is complete!'
+    expect(page).to have_content 'Completed'
+    expect(page).to_not have_button 'Complete'
+  end
 end
