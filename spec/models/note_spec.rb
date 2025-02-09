@@ -19,6 +19,15 @@ RSpec.describe Note, type: :model do
     expect(note.errors[:message]).to include("can't be blank")
   end
 
+  describe '#user_name' do
+    it '名前の取得をメモを作成したユーザーに移譲すること' do
+      user = instance_double('User', name: 'Fake User')
+      note = Note.new
+      allow(note).to receive(:user).and_return(user)
+      expect(note.user_name).to eq 'Fake User'
+    end
+  end
+
   describe '.search' do
     before do
       @note1 = FactoryBot.create(:note, message: 'This is first note.')
